@@ -1,33 +1,39 @@
 const SeriesRepository = require("../repositories/SeriesRepository");
+const FilterMovies = require("../../helpers/FilterMovies");
 
 class SerieController{
 
     async show(req,res){
 
-        const {email,password,perfil} = req.body;
+        try{
+
+            const {email,password,perfil} = req.body;
         
-        if(email && password && perfil){
+            if(email && password && perfil){
 
-           try{
+                const movies = await SeriesRepository.find(
+                    email,
+                    password,
+                    perfil
+                );
 
-            const movies = await SeriesRepository.find(
-                email,
-                password,
-                perfil
-            );
-            
-            if(movies.img <= 0 || movies.link <= 0) return res.status(400).json({
-                error:"Nenhum filme/serie encontrado(s) !"
-            });
+                const filtred = FilterMovies(
+                    movies.img,
+                    movies.link
+                );
 
-            return res.json({
-                movies
-            });
+                if(movies.img <= 0 || movies.link <= 0) return res.status(400).json({
+                    error:"Nenhum filme/serie encontrado(s) !"
+                });
 
-           }catch(err){
+                return res.json({
+                    movies:filtred
+                });
+            }
 
+        }catch(err){
 
-           }
+            console.log(err).status(400);
 
         }
 
