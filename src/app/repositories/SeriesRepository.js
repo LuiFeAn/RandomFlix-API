@@ -3,10 +3,10 @@ const puppeteer = require("puppeteer");
 //O data source é criado através do conceito de Web Screaping !
 class SeriesRepository{
 
-    async findOne(email,password,perfil){
+    async find(email,password,perfil){
 
         //Efetua o Login
-        const browser = await puppeteer.launch({headless:true});
+        const browser = await puppeteer.launch({headless:false});
         const login = await browser.newPage();
         await login.goto("http://netflix.com/login");
         await login.evaluate(async (email,password)=>{
@@ -33,7 +33,8 @@ class SeriesRepository{
                 const links = document.querySelectorAll(".ptrack-content a");
                 const img = [...imgs].map(({src})=>src);
                 const link = [...links].map(({href})=>href);
-                return {img:img,link:link};
+                
+                return {img,link};
         });
 
         return movieResult;
